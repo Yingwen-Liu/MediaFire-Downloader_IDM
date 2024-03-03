@@ -5,7 +5,7 @@ import os
 
 
 def get_link(url):
-    """Return the download link from the Mediafire url"""
+    """Parse the Mediafire url to get the download link"""
     res = requests.get(url)
     if res.status_code == 200:
         soup = BeautifulSoup(res.content, 'html.parser')
@@ -30,7 +30,6 @@ def download(url, save_path):
     if res.status_code == 200:
         with open(save_path, 'wb') as f:
             f.write(res.content)
-    
     else:
         raise Exception(f"Error {res.status_code}: Download link invalid")
 
@@ -50,10 +49,9 @@ def main():
         IDM = False
         print("Warning: Internet Download Manager not found")
     
-    # Read the Mediafire urls
+    # Convert the Mediafire urls to a list
     with open(urls_path, 'r') as f:
         urls = f.read()
-    
     urls = urls.split("\n")
     while '' in urls:
         urls.remove('')
@@ -75,7 +73,7 @@ def main():
         filename = download_link.split('/')[-1]
         save_path = os.path.join(save_dir, filename)
         print("Downloading " + filename)
-            
+
         try:                
             if IDM:
                 IDM_download(download_link, IDM_path)
